@@ -1,0 +1,18 @@
+{
+  "format_on_save": "on",
+  "code_actions_on_format": {
+    "source.organizeImports.biome": true
+  },
+  "formatter": {
+    "external": {
+      "command": "npx",
+      "arguments": [
+        "biome",
+        "check",
+        "--write",
+        "--stdin-file-path",
+        "{buffer_path}"
+      ]
+    }
+  }
+}
