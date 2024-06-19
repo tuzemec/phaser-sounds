@@ -1,27 +1,23 @@
-import { For, Show, createSignal } from "solid-js";
-import { EventBus } from "../game/EventBus";
-import type { Platform } from "../game/objects/Platform";
+import { type Accessor, For, Show, createMemo } from "solid-js";
+import { useGameContext } from "../game/PhaserGameContext";
+import { Platform } from "../game/objects/Platform";
 
 const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const OCTAVES = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 const DURATION = ["32n", "16n", "8n", "4n", "2n", "1n"];
 
 export default function PlatformEditor() {
-  const [visible, setVisible] = createSignal(false);
-  const [platform, setPlatform] = createSignal<Platform | null>(null);
+  const [state] = useGameContext();
 
-  EventBus.on("global.select.platform", (element: Platform) => {
-    setVisible(true);
-    setPlatform(element);
-  });
-
-  EventBus.on("global.deselect", () => {
-    setVisible(false);
-    setPlatform(null);
+  const platform: Accessor<Platform | null> = createMemo(() => {
+    if (state.selected && state.selected instanceof Platform) {
+      return state.selected as Platform;
+    }
+    return null;
   });
 
   return (
-    <Show when={visible() && platform()}>
+    <Show when={platform()}>
       <div class="editor">
         <form>
           <fieldset>

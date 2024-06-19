@@ -9,10 +9,11 @@ const HIGLIGHT = 0xffffff;
 export class Source extends Phaser.GameObjects.Container {
   balls: Phaser.GameObjects.Group;
   interval: number;
-  running: boolean;
   timer!: Phaser.Time.TimerEvent;
   rect: Phaser.GameObjects.Rectangle;
   selected: boolean;
+  muted: boolean;
+  running: boolean;
 
   constructor(scene: SoundScene, x: number, y: number, interval = 2000) {
     super(scene, x, y);
@@ -21,6 +22,7 @@ export class Source extends Phaser.GameObjects.Container {
     this.selected = false;
     this.balls = scene.add.group();
     this.setSize(30, 40);
+    this.muted = false;
     this.running = false;
 
     this.balls.createMultiple({
@@ -47,32 +49,29 @@ export class Source extends Phaser.GameObjects.Container {
       },
       this,
     );
+
     this.on("pointerdown", this.select, this);
 
     EventBus.on("global.deselect", this.deselect, this);
-    EventBus.on("global.start", this.start, this);
-    EventBus.on("global.stop", this.stop, this);
   }
 
   select() {
     if (this.selected) return;
 
     EventBus.emit("global.deselect");
-    EventBus.emit("global.select.source", this);
+    EventBus.emit("global.select", this);
 
     this.selected = true;
     this.rect.setFillStyle(HIGLIGHT);
   }
 
   deselect() {
-    this.rect.setFillStyle(COLOR);
     this.selected = false;
+    this.rect.setFillStyle(COLOR);
   }
 
   spawnBall() {
-    if (!this.running) return;
-
-    EventBus.emit("balls.spawn");
+    if (this.muted || !this.running) return;
 
     const ball = this.balls.getFirstDead(true);
     ball.spawn(this.x, 0);
@@ -85,14 +84,23 @@ export class Source extends Phaser.GameObjects.Container {
   }
 
   start() {
-    EventBus.emit("source.start", this);
+    if (this.running) return;
+
     this.running = true;
     this.spawnBall();
   }
 
   stop() {
-    EventBus.emit("source.stop", this);
     this.running = false;
+  }
+
+  mute() {
+    this.muted = true;
+  }
+
+  unmute() {
+    this.muted = false;
+    this.spawnBall();
   }
 
   setInterval(n: number) {

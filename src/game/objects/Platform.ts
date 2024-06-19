@@ -9,7 +9,7 @@ export class Platform extends Phaser.GameObjects.Container {
   platform: Phaser.GameObjects.Rectangle;
   outline: Phaser.GameObjects.Rectangle;
   selected: boolean;
-  synth: Tone.Synth;
+  synth: Tone.PolySynth;
   note: string;
   octave: string;
   duration: string;
@@ -89,7 +89,7 @@ export class Platform extends Phaser.GameObjects.Container {
     if (this.selected) return;
 
     EventBus.emit("global.deselect");
-    EventBus.emit("global.select.platform", this);
+    EventBus.emit("global.select", this);
 
     this.selected = true;
     this.platform.setFillStyle(HIGHLIGHT);

@@ -1,30 +1,46 @@
 import { onCleanup, onMount } from "solid-js";
-import { createStore } from "solid-js/store";
+import { EventBus } from "./EventBus";
+import { useGameContext } from "./PhaserGameContext";
 import StartGame from "./main";
-
-export interface IRefPhaserGame {
-  game: Phaser.Game | null;
-  scene: Phaser.Scene | null;
-}
+import type { Platform } from "./objects/Platform";
+import type { Source } from "./objects/Source";
+import type { SoundScene } from "./scenes/SoundScene";
 
 export const PhaserGame = () => {
   let gameContainer: HTMLDivElement | undefined;
-  const [instance, setInstance] = createStore<IRefPhaserGame>({
-    game: null,
-    scene: null,
-  });
+  const [, { setGame, setScene, clearState, select, deselect }] =
+    useGameContext();
+
+  const sceneHandler = (s: SoundScene) => {
+    setScene(s);
+  };
+
+  const selectHandler = (i: Platform | Source) => {
+    select(i);
+  };
+
+  const deselectHandler = () => {
+    deselect();
+  };
 
   onMount(() => {
     const gameInstance = StartGame("game-container");
-    setInstance("game", gameInstance);
-
-    onCleanup(() => {
-      if (instance.game) {
-        instance.game.destroy(true);
-        setInstance({ game: null, scene: null });
-      }
-    });
+    setGame(gameInstance);
+    EventBus.on("global.scene.ready", sceneHandler);
+    EventBus.on("global.select", selectHandler);
+    EventBus.on("global.deselect", selectHandler);
   });
 
-  return <div id="game-container" ref={gameContainer} />;
+  onCleanup(() => {
+    EventBus.off("global.scene.ready", sceneHandler);
+    EventBus.off("global.select", selectHandler);
+    EventBus.off("global.deselect", deselectHandler);
+    clearState();
+  });
+
+  return (
+    <>
+      <div id="game-container" ref={gameContainer} />
+    </>
+  );
 };

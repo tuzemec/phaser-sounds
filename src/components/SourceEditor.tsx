@@ -1,23 +1,19 @@
-import { Show, createSignal } from "solid-js";
-import { EventBus } from "../game/EventBus";
-import type { Source } from "../game/objects/Source";
+import { type Accessor, Show, createMemo } from "solid-js";
+import { useGameContext } from "../game/PhaserGameContext";
+import { Source } from "../game/objects/Source";
 
 export default function PlatformEditor() {
-  const [visible, setVisible] = createSignal(false);
-  const [source, setSource] = createSignal<Source | null>(null);
+  const [state] = useGameContext();
 
-  EventBus.on("global.select.source", (element: Source) => {
-    setVisible(true);
-    setSource(element);
-  });
-
-  EventBus.on("global.deselect", () => {
-    setVisible(false);
-    setSource(null);
+  const source: Accessor<Source | null> = createMemo(() => {
+    if (state.selected && state.selected instanceof Source) {
+      return state.selected as Source;
+    }
+    return null;
   });
 
   return (
-    <Show when={visible() && source()}>
+    <Show when={source()}>
       <div class="editor">
         <form>
           <fieldset>
@@ -37,15 +33,15 @@ export default function PlatformEditor() {
 
           <fieldset>
             <label>
-              <span>active</span>
+              <span>muted</span>
               <input
                 type="checkbox"
-                checked={source()?.running}
+                checked={source()?.muted}
                 onChange={(e) => {
                   if (e.currentTarget.checked) {
-                    source()!.start();
+                    source()!.mute();
                   } else {
-                    source()!.stop();
+                    source()!.unmute();
                   }
                 }}
               />

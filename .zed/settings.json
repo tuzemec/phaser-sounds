@@ -1,4 +1,10 @@
 {
+  "language_servers": [
+    "!eslint",
+    "!prettier",
+    "!typescript-language-server",
+    "..."
+  ],
   "format_on_save": "on",
   "code_actions_on_format": {
     "source.organizeImports.biome": true

@@ -1,28 +1,30 @@
-import * as Tone from "tone";
-import { EventBus } from "../game/EventBus";
+import { useGameContext } from "../game/PhaserGameContext";
 
 export default function () {
+  const [state] = useGameContext();
+
   return (
     <div class="controls">
-      <button onClick={() => EventBus.emit("global.add.source")} type="button">
+      <button onClick={() => state.scene?.addSource()} type="button">
         + source
       </button>
-      <button
-        onClick={() => EventBus.emit("global.add.platform")}
-        type="button"
-      >
+      <button onClick={() => state.scene?.addPlatform()} type="button">
         + platform
       </button>
       <button
         type="button"
         onClick={() => {
-          Tone.start();
-          EventBus.emit("global.start");
+          state.scene?.startSources();
         }}
       >
         START
       </button>
-      <button type="button" onClick={() => EventBus.emit("global.stop")}>
+      <button
+        type="button"
+        onClick={() => {
+          state.scene?.stopSources();
+        }}
+      >
         STOP
       </button>
     </div>

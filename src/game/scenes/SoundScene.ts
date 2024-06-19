@@ -3,11 +3,14 @@ import * as Tone from "tone";
 import { EventBus } from "../EventBus";
 import { Platform } from "../objects/Platform";
 import { Source } from "../objects/Source";
+import { execGroupMethod } from "../utils";
 
 export class SoundScene extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   gameText: Phaser.GameObjects.Text;
   synth: Tone.PolySynth;
+  sources: Phaser.GameObjects.Group;
+  toneInitialized: boolean;
 
   constructor() {
     super("SoundScene");
@@ -30,6 +33,8 @@ export class SoundScene extends Scene {
     this.camera = this.cameras.main;
     this.camera.setBackgroundColor(0x002233);
     this.synth = new Tone.PolySynth().toDestination();
+    this.sources = this.add.group();
+    this.toneInitialized = false;
 
     this.input.on(
       "pointerdown",
@@ -37,10 +42,6 @@ export class SoundScene extends Scene {
         if (!objects.length) EventBus.emit("global.deselect");
       },
     );
-
-    this.add.existing(new Platform(this, 130, 150, 20));
-    this.add.existing(new Platform(this, 280, 250, -20));
-    this.add.existing(new Source(this, 100, 0));
 
     this.matter.world.on(
       "collisionstart",
@@ -56,15 +57,17 @@ export class SoundScene extends Scene {
       },
     );
 
-    EventBus.emit("current-scene-ready", this);
-    EventBus.on("global.add.platform", () => this.addPlatform());
-    EventBus.on("global.add.source", this.addSource, this);
-    EventBus.on("global.start", this.initTone, this);
+    EventBus.emit("global.scene.ready", this);
   }
 
-  initTone() {
-    EventBus.off("global.start", this.initTone);
-    Tone.start();
+  startSources() {
+    if (!this.toneInitialized) Tone.start();
+
+    execGroupMethod<Source>(this.sources, "start");
+  }
+
+  stopSources() {
+    execGroupMethod<Source>(this.sources, "stop");
   }
 
   addPlatform() {
@@ -74,6 +77,7 @@ export class SoundScene extends Scene {
 
   addSource() {
     const { width } = this.sys.game.canvas;
-    this.add.existing(new Source(this, width / 2, 0));
+    const source = this.add.existing(new Source(this, width / 2, 0));
+    this.sources.add(source);
   }
 }
