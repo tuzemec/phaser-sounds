@@ -1,14 +1,15 @@
 import { Scene } from "phaser";
-import * as Tone from "tone";
+import { PolySynth } from "tone";
 import { EventBus } from "../EventBus";
+// import { initTone } from "../Transport";
 import { Platform } from "../objects/Platform";
 import { Source } from "../objects/Source";
-import { execGroupMethod } from "../utils";
+// import { execGroupMethod } from "../utils";}
 
 export class SoundScene extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   gameText: Phaser.GameObjects.Text;
-  synth: Tone.PolySynth;
+  synth: PolySynth;
   sources: Phaser.GameObjects.Group;
   toneInitialized: boolean;
 
@@ -32,7 +33,7 @@ export class SoundScene extends Scene {
 
     this.camera = this.cameras.main;
     this.camera.setBackgroundColor(0x002233);
-    this.synth = new Tone.PolySynth().toDestination();
+    this.synth = new PolySynth().toDestination();
     this.sources = this.add.group();
     this.toneInitialized = false;
 
@@ -58,16 +59,6 @@ export class SoundScene extends Scene {
     );
 
     EventBus.emit("global.scene.ready", this);
-  }
-
-  startSources() {
-    if (!this.toneInitialized) Tone.start();
-
-    execGroupMethod<Source>(this.sources, "start");
-  }
-
-  stopSources() {
-    execGroupMethod<Source>(this.sources, "stop");
   }
 
   addPlatform() {

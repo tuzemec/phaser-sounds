@@ -1,0 +1,10 @@
+{
+  "source": {
+    "width": 30,
+    "height": 40,
+    "balls": 10,
+    "color": "0x5500cc",
+    "highlight": "0xffffff",
+    "progress": "0x00ff00"
+  }
+}

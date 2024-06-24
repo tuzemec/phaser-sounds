@@ -1,8 +1,8 @@
 import { type ParentComponent, createContext, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
-import type { Platform } from "./objects/Platform";
-import type { Source } from "./objects/Source";
-import type { SoundScene } from "./scenes/SoundScene";
+import type { Platform } from "../game/objects/Platform";
+import type { Source } from "../game/objects/Source";
+import type { SoundScene } from "../game/scenes/SoundScene";
 
 type GameState = {
   game: Phaser.Game | null;

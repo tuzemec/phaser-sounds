@@ -1,5 +1,5 @@
 import { type Accessor, For, Show, createMemo } from "solid-js";
-import { useGameContext } from "../game/PhaserGameContext";
+import { useGameContext } from "../context/SoundSceneContext";
 import { Platform } from "../game/objects/Platform";
 
 const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];

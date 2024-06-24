@@ -1,7 +1,7 @@
 import Controls from "./components/Controls";
 import Editors from "./components/Editors";
+import { GameContextProvider } from "./context/SoundSceneContext";
 import { PhaserGame } from "./game/PhaserGame";
-import { GameContextProvider } from "./game/PhaserGameContext";
 
 const App = () => {
   return (

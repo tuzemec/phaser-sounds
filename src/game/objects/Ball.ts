@@ -48,7 +48,10 @@ export class Ball extends Phaser.Physics.Matter.Sprite {
     this.setPosition(x, y);
     this.active = true;
     this.visible = true;
-    this.setVelocity(0, 0);
+
+    this.setVelocity(0);
+    this.setAngularSpeed(0);
+    this.setAngularVelocity(0);
 
     this.trail.start();
   }

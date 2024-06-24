@@ -1,46 +1,65 @@
+import { Loop } from "tone";
+import config from "../../config.json";
 import { EventBus } from "../EventBus";
 import type { SoundScene } from "../scenes/SoundScene";
 import { Ball } from "./Ball";
 
-const BALLS_COUNT = 10;
-const COLOR = 0x5500cc;
-const HIGLIGHT = 0xffffff;
+const cfg = config.source;
 
 export class Source extends Phaser.GameObjects.Container {
   balls: Phaser.GameObjects.Group;
-  interval: number;
   timer!: Phaser.Time.TimerEvent;
   rect: Phaser.GameObjects.Rectangle;
   selected: boolean;
   muted: boolean;
-  running: boolean;
+  loop: Loop;
+  progress: Phaser.GameObjects.Graphics;
 
-  constructor(scene: SoundScene, x: number, y: number, interval = 2000) {
+  constructor(scene: SoundScene, x: number, y: number, interval = "1:0:0") {
     super(scene, x, y);
 
-    this.interval = interval;
     this.selected = false;
     this.balls = scene.add.group();
-    this.setSize(30, 40);
+    this.setSize(cfg.width, cfg.height);
     this.muted = false;
-    this.running = false;
+
+    this.loop = new Loop(() => {
+      this.spawnBall();
+    }, interval).start(0);
 
     this.balls.createMultiple({
       key: "balls",
       classType: Ball,
-      quantity: BALLS_COUNT,
+      quantity: cfg.balls,
       active: false,
       visible: false,
     });
 
-    this.rect = scene.add.rectangle(0, 0, 30, 40, COLOR);
+    this.rect = scene.add.rectangle(
+      0,
+      0,
+      cfg.width,
+      cfg.height,
+      Number(cfg.color),
+    );
     this.add(this.rect);
+
+    this.progress = scene.add.graphics();
+    this.add(this.progress);
 
     this.setInteractive({
       draggable: true,
-      hitArea: new Phaser.Geom.Rectangle(0, 0, 30, 40),
+      hitArea: new Phaser.Geom.Rectangle(0, 0, cfg.width, cfg.height),
       hitAreaCallback: Phaser.Geom.Rectangle.Contains,
     });
+
+    this.on(
+      "destroy",
+      () => {
+        this.loop.dispose();
+      },
+      this,
+    );
 
     this.on(
       "drag",
@@ -55,6 +74,18 @@ export class Source extends Phaser.GameObjects.Container {
     EventBus.on("global.deselect", this.deselect, this);
   }
 
+  preUpdate() {
+    this.progress
+      .clear()
+      .fillStyle(Number(cfg.progress))
+      .fillRect(
+        -this.width / 2,
+        0,
+        Phaser.Math.FromPercent(this.loop.progress, 0, this.width),
+        6,
+      );
+  }
+
   select() {
     if (this.selected) return;
 
@@ -62,48 +93,16 @@ export class Source extends Phaser.GameObjects.Container {
     EventBus.emit("global.select", this);
 
     this.selected = true;
-    this.rect.setFillStyle(HIGLIGHT);
+    this.rect.setFillStyle(Number(cfg.highlight));
   }
 
   deselect() {
     this.selected = false;
-    this.rect.setFillStyle(COLOR);
+    this.rect.setFillStyle(Number(cfg.color));
   }
 
   spawnBall() {
-    if (this.muted || !this.running) return;
-
     const ball = this.balls.getFirstDead(true);
-    ball.spawn(this.x, 0);
-
-    this.timer = this.scene.time.addEvent({
-      delay: this.interval,
-      callback: this.spawnBall,
-      callbackScope: this,
-    });
-  }
-
-  start() {
-    if (this.running) return;
-
-    this.running = true;
-    this.spawnBall();
-  }
-
-  stop() {
-    this.running = false;
-  }
-
-  mute() {
-    this.muted = true;
-  }
-
-  unmute() {
-    this.muted = false;
-    this.spawnBall();
-  }
-
-  setInterval(n: number) {
-    this.interval = n;
+    ball.spawn(this.x, 5);
   }
 }

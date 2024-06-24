@@ -1,6 +1,6 @@
 import { onCleanup, onMount } from "solid-js";
+import { useGameContext } from "../context/SoundSceneContext";
 import { EventBus } from "./EventBus";
-import { useGameContext } from "./PhaserGameContext";
 import StartGame from "./main";
 import type { Platform } from "./objects/Platform";
 import type { Source } from "./objects/Source";

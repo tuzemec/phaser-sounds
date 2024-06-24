@@ -1,4 +1,5 @@
-import { useGameContext } from "../game/PhaserGameContext";
+import * as Tone from "tone";
+import { useGameContext } from "../context/SoundSceneContext";
 
 export default function () {
   const [state] = useGameContext();
@@ -14,7 +15,8 @@ export default function () {
       <button
         type="button"
         onClick={() => {
-          state.scene?.startSources();
+          Tone.start();
+          Tone.getTransport().start();
         }}
       >
         START
@@ -22,7 +24,7 @@ export default function () {
       <button
         type="button"
         onClick={() => {
-          state.scene?.stopSources();
+          Tone.getTransport().stop();
         }}
       >
         STOP
