@@ -1,0 +1,35 @@
+.wrapper {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.keyboard {
+  height: 50px;
+  position: relative;
+  margin: 0 auto;
+  white-space: nowrap;
+}
+
+.key {
+  appearance: none;
+  padding: 0;
+  height: 40px;
+  width: 16px;
+  border: 1px solid #000;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+
+  &.dark {
+    background: #000;
+    height: 25px;
+    width: 12px;
+    z-index: 1;
+    position: absolute;
+    transform: translateX(-50%);
+  }
+
+  &.selected {
+    background: red;
+  }
+}

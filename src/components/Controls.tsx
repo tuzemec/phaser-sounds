@@ -1,8 +1,7 @@
-import * as Tone from "tone";
 import { useGameContext } from "../context/SoundSceneContext";
 
 export default function () {
-  const [state] = useGameContext();
+  const [state, { toggle }] = useGameContext();
 
   return (
     <div class="controls">
@@ -15,19 +14,10 @@ export default function () {
       <button
         type="button"
         onClick={() => {
-          Tone.start();
-          Tone.getTransport().start();
+          toggle();
         }}
       >
-        START
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          Tone.getTransport().stop();
-        }}
-      >
-        STOP
+        {state.playing ? "STOP" : "START"}
       </button>
     </div>
   );

@@ -63,7 +63,7 @@ export class SoundScene extends Scene {
 
   addPlatform() {
     const { width, height } = this.sys.game.canvas;
-    this.add.existing(new Platform(this, width / 2, height / 2, 20));
+    this.add.existing(new Platform(this, width / 2, height / 2));
   }
 
   addSource() {

@@ -1,5 +1,6 @@
 import { type ParentComponent, createContext, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
+import * as Tone from "tone";
 import type { Platform } from "../game/objects/Platform";
 import type { Source } from "../game/objects/Source";
 import type { SoundScene } from "../game/scenes/SoundScene";
@@ -8,6 +9,8 @@ type GameState = {
   game: Phaser.Game | null;
   scene: SoundScene | null;
   selected: Source | Platform | null;
+  playing: boolean;
+  initialized: boolean;
 };
 
 type GameActions = {
@@ -16,6 +19,8 @@ type GameActions = {
   clearState: () => void;
   select: (item: Source | Platform) => void;
   deselect: () => void;
+  toggle: () => void;
+  updatePlatform: () => void;
 };
 
 type GameStore = [GameState, GameActions];
@@ -25,6 +30,8 @@ const GameContext = createContext<GameStore>([
     game: null,
     scene: null,
     selected: null,
+    playing: false,
+    initialized: false,
   },
   {
     setGame: () => undefined,
@@ -32,6 +39,8 @@ const GameContext = createContext<GameStore>([
     clearState: () => undefined,
     select: () => undefined,
     deselect: () => undefined,
+    toggle: () => undefined,
+    updatePlatform: () => undefined,
   },
 ]);
 
@@ -40,6 +49,8 @@ export const GameContextProvider: ParentComponent = (props) => {
     game: null,
     scene: null,
     selected: null,
+    playing: false,
+    initialized: false,
   });
 
   const store: GameStore = [
@@ -63,6 +74,18 @@ export const GameContextProvider: ParentComponent = (props) => {
       },
       deselect() {
         setState("selected", null);
+      },
+      toggle() {
+        if (!state.initialized) {
+          Tone.start();
+          setState("initialized", true);
+        }
+
+        Tone.getTransport().toggle();
+        setState("playing", Tone.getTransport().state === "started");
+      },
+      updatePlatform() {
+        console.log("update platform", state);
       },
     },
   ];

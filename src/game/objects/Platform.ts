@@ -10,17 +10,16 @@ export class Platform extends Phaser.GameObjects.Container {
   outline: Phaser.GameObjects.Rectangle;
   selected: boolean;
   synth: Tone.PolySynth;
-  note: string;
+  note: string[];
   octave: string;
   duration: string;
 
-  constructor(scene: SoundScene, x: number, y: number, angle = 25) {
+  constructor(scene: SoundScene, x: number, y: number, angle = 0) {
     super(scene, x, y);
     this.selected = false;
     this.setSize(100, 10);
     this.synth = scene.synth;
-    this.note = "C";
-    this.octave = "4";
+    this.note = ["C4"];
     this.duration = "16n";
 
     scene.matter.add.gameObject(this, {
@@ -59,16 +58,8 @@ export class Platform extends Phaser.GameObjects.Container {
     return this.note;
   }
 
-  set setNote(value: string) {
+  set setNote(value: string[]) {
     this.note = value;
-  }
-
-  get getOctave() {
-    return this.octave;
-  }
-
-  set setOctave(value: string) {
-    this.octave = value;
   }
 
   get getDuration() {
@@ -102,10 +93,6 @@ export class Platform extends Phaser.GameObjects.Container {
 
   hit() {
     const now = Tone.now();
-    this.synth.triggerAttackRelease(
-      `${this.note}${this.octave}`,
-      this.duration,
-      now,
-    );
+    this.synth.triggerAttackRelease(this.note, this.duration, now);
   }
 }
