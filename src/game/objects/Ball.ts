@@ -1,14 +1,21 @@
-export class Ball extends Phaser.Physics.Matter.Sprite {
+import config from "../../config.json";
+
+const cfg = config.ball;
+
+export class Ball extends Phaser.GameObjects.Arc {
   trail: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene.matter.world, x, y, "balls", 1);
+    super(scene, x, y, cfg.radius, 0, 360, false, Number(cfg.color));
 
-    this.setCircle(8);
-    this.setBounce(1);
-    this.setFriction(0);
-    this.setFrictionAir(0.0052);
-    this.setFrictionStatic(0);
+    scene.matter.add.gameObject(this, {
+      friction: 0,
+      frictionAir: cfg.frictionAir,
+      frictionStatic: 0,
+      circleRadius: cfg.radius,
+      restitution: 1,
+      label: "ball",
+    });
 
     this.addTrail();
 
@@ -36,23 +43,23 @@ export class Ball extends Phaser.Physics.Matter.Sprite {
     this.trail.startFollow(this);
   }
 
-  preUpdate(time: number, delta: number) {
-    super.preUpdate(time, delta);
-
+  preUpdate() {
     const { height } = this.scene.sys.game.canvas;
 
-    if (this.y + this.height > height + 100) this.disable();
+    if (this.y + this.height > height + 100) {
+      this.disable();
+    }
   }
 
   spawn(x: number, y: number) {
     this.setPosition(x, y);
     this.active = true;
     this.visible = true;
-
-    this.setVelocity(0);
-    this.setAngularSpeed(0);
-    this.setAngularVelocity(0);
     this.setRotation(0);
+
+    const body = this.body as MatterJS.BodyType;
+    this.scene.matter.setVelocity(body, 0, 0);
+    this.scene.matter.setAngularVelocity(body, 0);
 
     this.trail.start();
   }

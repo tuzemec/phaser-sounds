@@ -32,6 +32,8 @@ export const PhaserGame = () => {
   });
 
   onCleanup(() => {
+    EventBus.emit("global.deselect");
+
     EventBus.off("global.scene.ready", sceneHandler);
     EventBus.off("global.select", selectHandler);
     EventBus.off("global.deselect", deselectHandler);

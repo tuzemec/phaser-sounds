@@ -68,6 +68,17 @@ export default function PlatformEditor() {
               />
             </label>
           </fieldset>
+
+          <fieldset>
+            <button
+              type="button"
+              onClick={() => {
+                state.scene?.removeSource(source()!);
+              }}
+            >
+              remove
+            </button>
+          </fieldset>
         </form>
       </div>
     </Show>

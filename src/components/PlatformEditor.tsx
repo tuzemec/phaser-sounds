@@ -1,4 +1,11 @@
-import { type Accessor, For, Show, createMemo } from "solid-js";
+import {
+  type Accessor,
+  For,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+} from "solid-js";
 import { useGameContext } from "../context/SoundSceneContext";
 import { Platform } from "../game/objects/Platform";
 import MidiKeyboard from "./MidiKeyboard";
@@ -7,6 +14,7 @@ const DURATION = ["32n", "16n", "8n", "4n", "2n", "1n"];
 
 export default function PlatformEditor() {
   const [state] = useGameContext();
+  const [selectedNotes, setSelectedNotes] = createSignal<string[]>([]);
 
   const platform: Accessor<Platform | null> = createMemo(() => {
     if (state.selected && state.selected instanceof Platform) {
@@ -15,10 +23,23 @@ export default function PlatformEditor() {
     return null;
   });
 
+  createEffect(() => {
+    setSelectedNotes(platform()?.note || []);
+  });
+
+  createEffect(() => {
+    if (!platform()) return;
+
+    platform()!.setNote = selectedNotes();
+  });
+
   return (
     <Show when={platform()}>
       <div class="editor">
-        <MidiKeyboard platform={platform()!} />
+        <MidiKeyboard
+          selectedNotes={selectedNotes}
+          setSelectedNotes={setSelectedNotes}
+        />
         <form>
           <fieldset>
             <label>
@@ -49,6 +70,28 @@ export default function PlatformEditor() {
                 </For>
               </select>
             </label>
+          </fieldset>
+
+          <fieldset>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedNotes([]);
+              }}
+            >
+              clear notes
+            </button>
+          </fieldset>
+
+          <fieldset>
+            <button
+              type="button"
+              onClick={() => {
+                state.scene?.removePlatform(platform()!);
+              }}
+            >
+              remove
+            </button>
           </fieldset>
         </form>
       </div>

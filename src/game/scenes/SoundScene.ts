@@ -2,16 +2,15 @@ import { Scene } from "phaser";
 import { PolySynth } from "tone";
 import config from "../../config.json";
 import { EventBus } from "../EventBus";
-// import { initTone } from "../Transport";
 import { Platform } from "../objects/Platform";
 import { Source } from "../objects/Source";
-// import { execGroupMethod } from "../utils";}
 
 export class SoundScene extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   gameText: Phaser.GameObjects.Text;
   synth: PolySynth;
   sources: Phaser.GameObjects.Group;
+  platforms: Phaser.GameObjects.Group;
   toneInitialized: boolean;
 
   constructor() {
@@ -36,6 +35,7 @@ export class SoundScene extends Scene {
     this.camera.setBackgroundColor(config.global.background);
     this.synth = new PolySynth().toDestination();
     this.sources = this.add.group();
+    this.platforms = this.add.group();
     this.toneInitialized = false;
 
     this.input.on(
@@ -64,12 +64,32 @@ export class SoundScene extends Scene {
 
   addPlatform() {
     const { width, height } = this.sys.game.canvas;
-    this.add.existing(new Platform(this, width / 2, height / 2));
+    const offset = this.platforms.getLength() * 50;
+    const platform = this.add.existing(
+      new Platform(this, width / 2 + offset, height / 2 + offset),
+    );
+    this.platforms.add(platform);
   }
 
   addSource() {
+    if (this.sources.getLength() >= config.source.maxCount) return;
     const { width } = this.sys.game.canvas;
-    const source = this.add.existing(new Source(this, width / 2, 0));
+    const newX =
+      this.sources.getLength() === 0
+        ? width / 2
+        : this.sources.getLast(true).x + 50;
+
+    const source = this.add.existing(new Source(this, newX, 0));
     this.sources.add(source);
+  }
+
+  removePlatform(platform: Platform) {
+    EventBus.emit("global.deselect");
+    platform.destroy();
+  }
+
+  removeSource(source: Source) {
+    EventBus.emit("global.deselect");
+    source.destroy();
   }
 }

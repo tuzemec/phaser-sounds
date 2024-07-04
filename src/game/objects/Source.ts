@@ -85,13 +85,25 @@ export class Source extends Phaser.GameObjects.Container {
   preUpdate() {
     this.progress
       .clear()
-      .fillStyle(Number(cfg.progressColor))
-      .fillRect(
-        -this.width / 2,
-        cfg.progressOffset,
-        Phaser.Math.FromPercent(this.loop.progress, 0, this.width),
-        cfg.progressHeight,
-      );
+      .lineStyle(cfg.progressStroke, Number(cfg.progressColor))
+      .beginPath()
+      .arc(
+        0,
+        cfg.progressRadius + 5,
+        cfg.progressRadius,
+        Phaser.Math.DegToRad(-90),
+        Phaser.Math.DegToRad(
+          Phaser.Math.FromPercent(this.loop.progress, -90, 360 - 90),
+        ),
+      )
+      .strokePath()
+      .closePath();
+    // .fillRect(
+    //   -this.width / 2,
+    //   cfg.progressOffset,
+    //   Phaser.Math.FromPercent(this.loop.progress, 0, this.width),
+    //   cfg.progressHeight,
+    // );
   }
 
   select() {

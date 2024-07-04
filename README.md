@@ -47,7 +47,6 @@ We have provided a default project structure to get you started. This is as foll
 - `src/game` - Contains the game source code.
 - `src/game/main.tsx` - The main **game** entry point. This contains the game configuration and start the game.
 - `src/game/scenes/` - The Phaser Scenes are in this folder.
-- `public/style.css` - Some simple CSS rules to help with page layout.
 - `public/assets` - Contains the static assets used by the game.
 
 ## Solid Bridge
@@ -116,7 +115,7 @@ const ReactComponent = () => {
     let phaserRef; // This will hold the PhaserGame component reference {game, scene}
 
     const onCurrentActiveScene = (scene: Phaser.Scene) => {
-    
+
         // This is invoked
 
     }
