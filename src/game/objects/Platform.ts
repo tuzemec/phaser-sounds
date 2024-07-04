@@ -1,38 +1,47 @@
 import * as Tone from "tone";
+import config from "../../config.json";
 import { EventBus } from "../EventBus";
 import type { SoundScene } from "../scenes/SoundScene";
 
-const COLOR = 0x00aa99;
-const HIGHLIGHT = 0xfffffff;
+const cfg = config.platform;
 
 export class Platform extends Phaser.GameObjects.Container {
-  platform: Phaser.GameObjects.Rectangle;
-  outline: Phaser.GameObjects.Rectangle;
+  platform: Phaser.GameObjects.Graphics;
   selected: boolean;
   synth: Tone.PolySynth;
   note: string[];
   octave: string;
   duration: string;
 
-  constructor(scene: SoundScene, x: number, y: number, angle = 0) {
+  constructor(
+    scene: SoundScene,
+    x: number,
+    y: number,
+    angle = cfg.defaultAngle,
+  ) {
     super(scene, x, y);
     this.selected = false;
-    this.setSize(100, 10);
+    this.setSize(cfg.width, cfg.height);
     this.synth = scene.synth;
-    this.note = ["C4"];
-    this.duration = "16n";
+    this.note = cfg.defaultNote;
+    this.duration = cfg.defaultDuration;
 
     scene.matter.add.gameObject(this, {
       isStatic: true,
       angle: Phaser.Math.DegToRad(angle),
+      chamfer: {
+        radius: cfg.radius,
+      },
     });
 
-    this.platform = scene.add.rectangle(0, 0, 100, 10, COLOR);
+    // this.platform = scene.add.rectangle(0, 0, 100, 10, COLOR);
+    this.platform = scene.add.graphics();
     this.add(this.platform);
+    this.drawPlatform();
 
     this.setInteractive({
       draggable: true,
-      hitArea: new Phaser.Geom.Rectangle(0, 0, 100, 10),
+      hitArea: new Phaser.Geom.Rectangle(0, 0, cfg.width, cfg.height),
       hitAreaCallback: Phaser.Geom.Rectangle.Contains,
     });
 
@@ -52,6 +61,19 @@ export class Platform extends Phaser.GameObjects.Container {
     this.on("wheel", this.wheel, this);
 
     EventBus.on("global.deselect", this.deselect, this);
+  }
+
+  private drawPlatform(color = Number(cfg.color)) {
+    this.platform
+      .clear()
+      .fillStyle(color)
+      .fillRoundedRect(
+        0 - cfg.width / 2,
+        0 - cfg.height / 2,
+        cfg.width,
+        cfg.height,
+        cfg.radius,
+      );
   }
 
   get getNote() {
@@ -82,13 +104,14 @@ export class Platform extends Phaser.GameObjects.Container {
     EventBus.emit("global.deselect");
     EventBus.emit("global.select", this);
 
+    this.drawPlatform(Number(cfg.highlightColor));
+
     this.selected = true;
-    this.platform.setFillStyle(HIGHLIGHT);
   }
 
   deselect() {
-    this.platform.setFillStyle(COLOR);
     this.selected = false;
+    this.drawPlatform();
   }
 
   hit() {

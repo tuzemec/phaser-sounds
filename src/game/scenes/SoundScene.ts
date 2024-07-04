@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import { PolySynth } from "tone";
+import config from "../../config.json";
 import { EventBus } from "../EventBus";
 // import { initTone } from "../Transport";
 import { Platform } from "../objects/Platform";
@@ -32,7 +33,7 @@ export class SoundScene extends Scene {
     );
 
     this.camera = this.cameras.main;
-    this.camera.setBackgroundColor(0x002233);
+    this.camera.setBackgroundColor(config.global.background);
     this.synth = new PolySynth().toDestination();
     this.sources = this.add.group();
     this.toneInitialized = false;

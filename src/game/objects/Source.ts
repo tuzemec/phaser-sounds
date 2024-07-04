@@ -9,7 +9,7 @@ const cfg = config.source;
 export class Source extends Phaser.GameObjects.Container {
   balls: Phaser.GameObjects.Group;
   timer!: Phaser.Time.TimerEvent;
-  rect: Phaser.GameObjects.Rectangle;
+  rect: Phaser.GameObjects.Graphics;
   selected: boolean;
   muted: boolean;
   loop: Loop;
@@ -35,14 +35,9 @@ export class Source extends Phaser.GameObjects.Container {
       visible: false,
     });
 
-    this.rect = scene.add.rectangle(
-      0,
-      0,
-      cfg.width,
-      cfg.height,
-      Number(cfg.color),
-    );
+    this.rect = scene.add.graphics();
     this.add(this.rect);
+    this.drawGfx();
 
     this.progress = scene.add.graphics();
     this.add(this.progress);
@@ -74,15 +69,28 @@ export class Source extends Phaser.GameObjects.Container {
     EventBus.on("global.deselect", this.deselect, this);
   }
 
+  private drawGfx(color = Number(cfg.color)) {
+    this.rect
+      .clear()
+      .fillStyle(color)
+      .fillRoundedRect(
+        -cfg.width / 2,
+        -cfg.height / 2,
+        cfg.width,
+        cfg.height,
+        cfg.radius,
+      );
+  }
+
   preUpdate() {
     this.progress
       .clear()
-      .fillStyle(Number(cfg.progress))
+      .fillStyle(Number(cfg.progressColor))
       .fillRect(
         -this.width / 2,
-        0,
+        cfg.progressOffset,
         Phaser.Math.FromPercent(this.loop.progress, 0, this.width),
-        6,
+        cfg.progressHeight,
       );
   }
 
@@ -93,12 +101,12 @@ export class Source extends Phaser.GameObjects.Container {
     EventBus.emit("global.select", this);
 
     this.selected = true;
-    this.rect.setFillStyle(Number(cfg.highlight));
+    this.drawGfx(Number(cfg.highlight));
   }
 
   deselect() {
     this.selected = false;
-    this.rect.setFillStyle(Number(cfg.color));
+    this.drawGfx();
   }
 
   spawnBall() {

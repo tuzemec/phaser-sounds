@@ -1,10 +1,26 @@
 {
+  "global": {
+    "background": "0x003049"
+  },
   "source": {
     "width": 30,
-    "height": 40,
+    "height": 52,
+    "radius": 6,
     "balls": 10,
-    "color": "0x5500cc",
+    "color": "0xD62828",
     "highlight": "0xffffff",
-    "progress": "0x00ff00"
+    "progressColor": "0x00ff00",
+    "progressHeight": 8,
+    "progressOffset": 8
+  },
+  "platform": {
+    "color": "0xFCBF49",
+    "highlightColor": "0xEAE2B7",
+    "width": 120,
+    "height": 12,
+    "radius": 6,
+    "defaultAngle": 0,
+    "defaultNote": ["C4"],
+    "defaultDuration": "16n"
   }
 }

@@ -4,6 +4,7 @@ import styles from "./MidiKeyboard.module.css";
 
 const KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const OCTAVES = [1, 2, 3, 4, 5, 6];
+const MAX_KEYS = 7;
 
 type Props = {
   platform: Platform;
@@ -26,7 +27,8 @@ const MidiKeyboard: Component<Props> = (props) => {
                 <button
                   onClick={() => {
                     const k = `${key}${octave}`;
-                    if (!selected().includes(k)) setSelected((s) => [...s, k]);
+                    if (!selected().includes(k) && selected().length < MAX_KEYS)
+                      setSelected((s) => [...s, k]);
                     else setSelected((s) => s.filter((sk) => sk !== k));
                   }}
                   type="button"
