@@ -18,7 +18,7 @@ const About = () => {
   return (
     <div class={styles.overlay}>
       <article class={styles.content}>
-        <header>About</header>
+        <header>Phaser Sounds</header>
         <main>
           <p>
             Heavily inspired by{" "}
@@ -37,6 +37,7 @@ const About = () => {
           </p>
           <p>
             Using <a href="https://phaser.io/">Phaser</a>,{" "}
+            <a href="https://brm.io/matter-js/">MatterJS</a>,{" "}
             <a href="https://www.solidjs.com/">SolidJS</a> and{" "}
             <a href="https://tonejs.github.io/">Tone.js</a>.
           </p>
