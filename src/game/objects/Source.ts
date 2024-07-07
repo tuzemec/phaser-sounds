@@ -1,10 +1,16 @@
 import { Loop } from "tone";
 import config from "../../config.json";
+import type { SourceData } from "../../utils/serialize";
 import { EventBus } from "../EventBus";
 import type { SoundScene } from "../scenes/SoundScene";
 import { Ball } from "./Ball";
 
 const cfg = config.source;
+
+const defaultData: Omit<SourceData, "x" | "y"> = {
+  muted: false,
+  interval: cfg.defaultInterval,
+};
 
 export class Source extends Phaser.GameObjects.Container {
   balls: Phaser.GameObjects.Group;
@@ -14,18 +20,20 @@ export class Source extends Phaser.GameObjects.Container {
   muted: boolean;
   loop: Loop;
   progress: Phaser.GameObjects.Graphics;
+  interval: string;
 
-  constructor(scene: SoundScene, x: number, y: number, interval = "1:0:0") {
+  constructor(scene: SoundScene, x: number, y: number, config = defaultData) {
     super(scene, x, y);
 
     this.selected = false;
     this.balls = scene.add.group();
     this.setSize(cfg.width, cfg.height);
-    this.muted = false;
+    this.muted = config.muted;
+    this.interval = config.interval;
 
     this.loop = new Loop(() => {
       this.spawnBall();
-    }, interval).start(0);
+    }, this.interval).start(0);
 
     this.balls.createMultiple({
       key: "balls",
@@ -98,12 +106,6 @@ export class Source extends Phaser.GameObjects.Container {
       )
       .strokePath()
       .closePath();
-    // .fillRect(
-    //   -this.width / 2,
-    //   cfg.progressOffset,
-    //   Phaser.Math.FromPercent(this.loop.progress, 0, this.width),
-    //   cfg.progressHeight,
-    // );
   }
 
   select() {
@@ -124,5 +126,14 @@ export class Source extends Phaser.GameObjects.Container {
   spawnBall() {
     const ball = this.balls.getFirstDead(true);
     ball.spawn(this.x, 5);
+  }
+
+  serialize(): SourceData {
+    return {
+      x: this.x,
+      y: this.y,
+      muted: this.muted,
+      interval: this.interval,
+    };
   }
 }

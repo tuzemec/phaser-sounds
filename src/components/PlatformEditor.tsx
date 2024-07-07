@@ -79,7 +79,7 @@ export default function PlatformEditor() {
                 setSelectedNotes([]);
               }}
             >
-              clear notes
+              clear
             </button>
           </fieldset>
 

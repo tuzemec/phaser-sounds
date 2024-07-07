@@ -1,15 +1,13 @@
 import Controls from "./components/Controls";
-import Editors from "./components/Editors";
 import { GameContextProvider } from "./context/SoundSceneContext";
-import { PhaserGame } from "./game/PhaserGame";
+import { PhaserComp } from "./game/PhaserComp";
 
 const App = () => {
   return (
     <GameContextProvider>
       <div id="app">
-        <Editors />
         <Controls />
-        <PhaserGame />
+        <PhaserComp />
       </div>
     </GameContextProvider>
   );

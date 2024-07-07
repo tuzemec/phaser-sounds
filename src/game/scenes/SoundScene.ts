@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { PolySynth } from "tone";
 import config from "../../config.json";
+import type { CurrentState } from "../../utils/serialize";
 import { EventBus } from "../EventBus";
 import { Platform } from "../objects/Platform";
 import { Source } from "../objects/Source";
@@ -60,6 +61,28 @@ export class SoundScene extends Scene {
     );
 
     EventBus.emit("global.scene.ready", this);
+
+    this.parseUrlState();
+  }
+
+  private parseUrlState() {
+    const params = new URLSearchParams(location.search);
+
+    if (!params.get("state")) return;
+
+    const state = JSON.parse(
+      decodeURIComponent(params.get("state")!),
+    ) as CurrentState;
+
+    for (const p of state.p) {
+      const platform = this.add.existing(new Platform(this, p.x, p.y, p));
+      this.platforms.add(platform);
+    }
+
+    for (const s of state.s) {
+      const source = this.add.existing(new Source(this, s.x, s.y, s));
+      this.sources.add(source);
+    }
   }
 
   addPlatform() {
@@ -92,4 +115,13 @@ export class SoundScene extends Scene {
     EventBus.emit("global.deselect");
     source.destroy();
   }
+
+  // getState() {
+  //   const ret = { s: [], p: [] };
+
+  //   for (const s in this.sources.children) {
+  //     console.log(s);
+  //     ret.s.push(s);
+  //   }
+  // }
 }

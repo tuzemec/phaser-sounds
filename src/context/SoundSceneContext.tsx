@@ -11,6 +11,7 @@ type GameState = {
   selected: Source | Platform | null;
   playing: boolean;
   initialized: boolean;
+  aboutOpened: boolean;
 };
 
 type GameActions = {
@@ -21,6 +22,7 @@ type GameActions = {
   deselect: () => void;
   toggle: () => void;
   updatePlatform: () => void;
+  toggleAbout: () => void;
 };
 
 type GameStore = [GameState, GameActions];
@@ -32,6 +34,7 @@ const GameContext = createContext<GameStore>([
     selected: null,
     playing: false,
     initialized: false,
+    aboutOpened: false,
   },
   {
     setGame: () => undefined,
@@ -41,6 +44,7 @@ const GameContext = createContext<GameStore>([
     deselect: () => undefined,
     toggle: () => undefined,
     updatePlatform: () => undefined,
+    toggleAbout: () => undefined,
   },
 ]);
 
@@ -51,6 +55,7 @@ export const GameContextProvider: ParentComponent = (props) => {
     selected: null,
     playing: false,
     initialized: false,
+    aboutOpened: false,
   });
 
   const store: GameStore = [
@@ -86,6 +91,9 @@ export const GameContextProvider: ParentComponent = (props) => {
       },
       updatePlatform() {
         console.log("update platform", state);
+      },
+      toggleAbout() {
+        setState("aboutOpened", (s) => !s);
       },
     },
   ];

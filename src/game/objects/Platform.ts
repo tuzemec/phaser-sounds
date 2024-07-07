@@ -1,40 +1,40 @@
 import * as Tone from "tone";
 import config from "../../config.json";
+import type { PlatformData } from "../../utils/serialize";
 import { EventBus } from "../EventBus";
 import type { SoundScene } from "../scenes/SoundScene";
 
 const cfg = config.platform;
+
+const defaultData: Omit<PlatformData, "x" | "y"> = {
+  angle: cfg.defaultAngle,
+  note: cfg.defaultNote,
+  duration: cfg.defaultDuration,
+};
 
 export class Platform extends Phaser.GameObjects.Container {
   platform: Phaser.GameObjects.Graphics;
   selected: boolean;
   synth: Tone.PolySynth;
   note: string[];
-  octave: string;
   duration: string;
 
-  constructor(
-    scene: SoundScene,
-    x: number,
-    y: number,
-    angle = cfg.defaultAngle,
-  ) {
+  constructor(scene: SoundScene, x: number, y: number, config = defaultData) {
     super(scene, x, y);
     this.selected = false;
     this.setSize(cfg.width, cfg.height);
     this.synth = scene.synth;
-    this.note = cfg.defaultNote;
+    this.note = config.note;
     this.duration = cfg.defaultDuration;
 
     scene.matter.add.gameObject(this, {
       isStatic: true,
-      angle: Phaser.Math.DegToRad(angle),
+      angle: Phaser.Math.DegToRad(config.angle),
       chamfer: {
         radius: cfg.radius,
       },
     });
 
-    // this.platform = scene.add.rectangle(0, 0, 100, 10, COLOR);
     this.platform = scene.add.graphics();
     this.add(this.platform);
     this.drawPlatform();
@@ -117,5 +117,15 @@ export class Platform extends Phaser.GameObjects.Container {
   hit() {
     const now = Tone.now();
     this.synth.triggerAttackRelease(this.note, this.duration, now);
+  }
+
+  serialize(): PlatformData {
+    return {
+      x: this.x,
+      y: this.y,
+      angle: this.angle,
+      duration: this.duration,
+      note: this.note,
+    };
   }
 }

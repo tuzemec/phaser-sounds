@@ -6,6 +6,18 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+a {
+  color: #EAE2B7;
+
+  &:visited {
+    color: #EAE2B7;
+  }
+}
+
+button {
+  font-family: inherit;
+}
+
 #app {
     width: 100%;
     height: 100vh;
@@ -16,15 +28,11 @@ body {
 }
 
 .editor {
-  --shadow-color: #fff;
-  position: fixed;
-  bottom: 1em;
-  left: 1em;
-  right: 1em;
-  background: #000D1499;
+  /* background: #000000; */
+  background: #000D14;
+
   color: #EAE2B7;
-  padding: .5em;
-  border-radius: 0.5rem;
+  padding: 1rem .5rem;
   border: 1px solid #000D14;
   box-shadow:
     2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
@@ -33,6 +41,10 @@ body {
     22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
     41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
     100px 100px 80px rgba(0, 0, 0, 0.07);
+
+  & input {
+    accent-color: #FCBF49;
+  }
 
   & form {
     display: flex;
@@ -43,8 +55,8 @@ body {
 
   & fieldset {
     /* border: 1px solid #000D14; */
-    background: #000D14;
-    border: 0;
+    /* background: #EAE2B706; */
+    border: 1px solid #001f2f;
     padding: 0.75rem;
     border-radius: 0.5rem;
     display: flex;
@@ -69,19 +81,85 @@ body {
 
 .controls {
   position: fixed;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: #f0f0f0;
+  bottom: 0rem;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+
+  box-shadow:
+    0px 0px 3px -2px rgba(0, 0, 0, 0.034),
+    0px 0px 8.6px -2px rgba(0, 0, 0, 0.048),
+    0px 0px 17.8px -2px rgba(0, 0, 0, 0.06),
+    0px 0px 32.4px -2px rgba(0, 0, 0, 0.072),
+    0px 0px 54.9px -2px rgba(0, 0, 0, 0.086),
+    0px 0px 80px -2px rgba(0, 0, 0, 0.12)
+  ;
+}
+
+.controls-content {
+  --controls-bg: #001622;
+  background: var(--controls-bg);
   display: flex;
   gap: 0.25rem;
-  padding: 0.25rem;
-  flex-direction: column;
-  border-radius: 0.25rem;
-  box-shadow:
-    2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),
-    6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),
-    12.5px 12.5px 10px rgba(0, 0, 0, 0.035),
-    22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),
-    41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),
-    100px 100px 80px rgba(0, 0, 0, 0.07);
+  padding: 0.25rem .5rem;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  & div {
+    display: flex;
+    flex-direction: row;
+  }
+
+  & button {
+    border: none;
+    padding: .25rem;
+    cursor: pointer;
+    background: var(--controls-bg);
+    color: #EAE2B7;
+    font-weight: normal;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+
+    &:hover {
+      & svg {
+        fill: #fcbf49;
+      }
+    }
+  }
+
+}
+
+.play-button {
+  --btn-size: 56px;
+  position: relative;
+  width: var(--btn-size);
+  margin: 0 1rem;
+
+  & .playing {
+    & svg {
+      fill: #f77f00;
+    }
+  }
+
+  & .stopped {
+    & svg {
+      fill: #18892D;
+    }
+  }
+
+  & button {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0.5rem;
+    border-radius: var(--btn-size);
+  }
+
+  & svg {
+    width: var(--btn-size);
+    height: var(--btn-size);
+  }
 }

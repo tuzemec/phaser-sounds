@@ -12,13 +12,14 @@
 }
 
 .key {
+  --key-radius: 3px;
   appearance: none;
   padding: 0;
   height: 40px;
   width: 16px;
   border: 1px solid #000;
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: var(--key-radius);
+  border-bottom-right-radius: var(--key-radius);
 
   &.dark {
     background: #000;
@@ -30,6 +31,6 @@
   }
 
   &.selected {
-    background: red;
+    background: #D62828;
   }
 }

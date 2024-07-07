@@ -6,7 +6,7 @@ import type { Platform } from "./objects/Platform";
 import type { Source } from "./objects/Source";
 import type { SoundScene } from "./scenes/SoundScene";
 
-export const PhaserGame = () => {
+export const PhaserComp = () => {
   let gameContainer: HTMLDivElement | undefined;
   const [, { setGame, setScene, clearState, select, deselect }] =
     useGameContext();
