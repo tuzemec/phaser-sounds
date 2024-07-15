@@ -3,6 +3,7 @@ import config from "../../config.json";
 import type { PlatformData } from "../../utils/serialize";
 import { EventBus } from "../EventBus";
 import type { SoundScene } from "../scenes/SoundScene";
+import type { Source } from "./Source";
 
 const cfg = config.platform;
 
@@ -15,7 +16,6 @@ const defaultData: Omit<PlatformData, "x" | "y"> = {
 export class Platform extends Phaser.GameObjects.Container {
   platform: Phaser.GameObjects.Graphics;
   selected: boolean;
-  synth: Tone.PolySynth;
   note: string[];
   duration: string;
 
@@ -23,7 +23,6 @@ export class Platform extends Phaser.GameObjects.Container {
     super(scene, x, y);
     this.selected = false;
     this.setSize(cfg.width, cfg.height);
-    this.synth = scene.synth;
     this.note = config.note;
     this.duration = cfg.defaultDuration;
 
@@ -114,9 +113,9 @@ export class Platform extends Phaser.GameObjects.Container {
     this.drawPlatform();
   }
 
-  hit() {
+  hit(source: Source) {
     const now = Tone.now();
-    this.synth.triggerAttackRelease(this.note, this.duration, now);
+    source.synth.triggerAttackRelease(this.note, this.duration, now);
   }
 
   serialize(): PlatformData {

@@ -2,6 +2,7 @@ import { For, Show, createMemo } from "solid-js";
 import { Time } from "tone";
 import { useGameContext } from "../context/SoundSceneContext";
 import { Source } from "../game/objects/Source";
+import SynthEditor from "./SynthEditor";
 
 const INTERVALS = [
   "0:1:0",
@@ -81,6 +82,7 @@ export default function PlatformEditor() {
           </fieldset>
         </form>
       </div>
+      <SynthEditor />
     </Show>
   );
 }

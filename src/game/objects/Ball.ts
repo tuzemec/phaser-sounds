@@ -1,9 +1,11 @@
 import config from "../../config.json";
+import type { Source } from "./Source";
 
 const cfg = config.ball;
 
 export class Ball extends Phaser.GameObjects.Arc {
   trail: Phaser.GameObjects.Particles.ParticleEmitter;
+  source: Source;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, cfg.radius, 0, 360, false, Number(cfg.color));
@@ -20,6 +22,10 @@ export class Ball extends Phaser.GameObjects.Arc {
     this.addTrail();
 
     this.disable(); // disabled on creation, call spawn()
+  }
+
+  setSource(s: Source) {
+    this.source = s;
   }
 
   addTrail() {

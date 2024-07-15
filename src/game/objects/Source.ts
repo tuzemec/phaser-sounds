@@ -1,4 +1,4 @@
-import { Loop } from "tone";
+import { Loop, type OmniOscillatorOptions, PolySynth, Synth } from "tone";
 import config from "../../config.json";
 import type { SourceData } from "../../utils/serialize";
 import { EventBus } from "../EventBus";
@@ -10,6 +10,11 @@ const cfg = config.source;
 const defaultData: Omit<SourceData, "x" | "y"> = {
   muted: false,
   interval: cfg.defaultInterval,
+  osc: "sine",
+  a: 0.005,
+  d: 0.1,
+  s: 0.3,
+  r: 1,
 };
 
 export class Source extends Phaser.GameObjects.Container {
@@ -21,15 +26,29 @@ export class Source extends Phaser.GameObjects.Container {
   loop: Loop;
   progress: Phaser.GameObjects.Graphics;
   interval: string;
+  synth: PolySynth<Synth>;
 
-  constructor(scene: SoundScene, x: number, y: number, config = defaultData) {
+  constructor(
+    scene: SoundScene,
+    x: number,
+    y: number,
+    config: Partial<Omit<SourceData, "x" | "y">>,
+  ) {
     super(scene, x, y);
+
+    const c = Object.assign({}, defaultData, config);
 
     this.selected = false;
     this.balls = scene.add.group();
     this.setSize(cfg.width, cfg.height);
-    this.muted = config.muted;
-    this.interval = config.interval;
+    this.muted = c.muted;
+    this.interval = c.interval;
+    this.synth = new PolySynth(Synth).toDestination();
+
+    this.synth.set({
+      oscillator: { type: c.osc } as OmniOscillatorOptions,
+      envelope: { attack: c.a, decay: c.d, sustain: c.s, release: c.r },
+    });
 
     this.loop = new Loop(() => {
       this.spawnBall();
@@ -42,6 +61,12 @@ export class Source extends Phaser.GameObjects.Container {
       active: false,
       visible: false,
     });
+
+    Phaser.Actions.Call(
+      this.balls.getChildren(),
+      (ball) => (ball as Ball).setSource(this),
+      this,
+    );
 
     this.rect = scene.add.graphics();
     this.add(this.rect);
@@ -134,6 +159,7 @@ export class Source extends Phaser.GameObjects.Container {
       y: this.y,
       muted: this.muted,
       interval: this.interval,
+      osc: this.synth.get().oscillator.type,
     };
   }
 }

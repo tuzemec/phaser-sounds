@@ -1,3 +1,4 @@
+import type { OmniOscillatorType } from "tone/build/esm/source/oscillator/OscillatorInterface";
 import type { Platform } from "../game/objects/Platform";
 import type { Source } from "../game/objects/Source";
 import type { SoundScene } from "../game/scenes/SoundScene";
@@ -7,6 +8,11 @@ export type SourceData = {
   y: number;
   muted: boolean;
   interval: string;
+  osc: OmniOscillatorType;
+  a: number;
+  d: number;
+  s: number;
+  r: number;
 };
 
 export type PlatformData = {

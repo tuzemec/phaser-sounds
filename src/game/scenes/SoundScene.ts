@@ -1,5 +1,4 @@
 import { Scene } from "phaser";
-import { PolySynth } from "tone";
 import config from "../../config.json";
 import type { CurrentState } from "../../utils/serialize";
 import { EventBus } from "../EventBus";
@@ -9,7 +8,6 @@ import { Source } from "../objects/Source";
 export class SoundScene extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   gameText: Phaser.GameObjects.Text;
-  synth: PolySynth;
   sources: Phaser.GameObjects.Group;
   platforms: Phaser.GameObjects.Group;
   toneInitialized: boolean;
@@ -34,7 +32,6 @@ export class SoundScene extends Scene {
 
     this.camera = this.cameras.main;
     this.camera.setBackgroundColor(config.global.background);
-    this.synth = new PolySynth().toDestination();
     this.sources = this.add.group();
     this.platforms = this.add.group();
     this.toneInitialized = false;
@@ -55,8 +52,8 @@ export class SoundScene extends Scene {
       ) => {
         if (!a.gameObject || !b.gameObject) return;
 
-        if (a.gameObject.hit) a.gameObject.hit();
-        if (b.gameObject.hit) b.gameObject.hit();
+        if (a.gameObject.hit) a.gameObject.hit(b.gameObject.source);
+        if (b.gameObject.hit) b.gameObject.hit(a.gameObject.source);
       },
     );
 
