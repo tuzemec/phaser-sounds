@@ -3,12 +3,14 @@
     "!eslint",
     "!prettier",
     "!typescript-language-server",
+    "biome",
     "..."
   ],
   "format_on_save": "on",
   "code_actions_on_format": {
     "source.organizeImports.biome": true,
-    "source.fixAll": true
+    "source.fixAll.ts": true,
+    "source.removeUnusedImports": true
   },
   "formatter": {
     "external": {

@@ -160,6 +160,10 @@ export class Source extends Phaser.GameObjects.Container {
       muted: this.muted,
       interval: this.interval,
       osc: this.synth.get().oscillator.type,
+      a: this.synth.get().envelope.attack,
+      d: this.synth.get().envelope.decay,
+      s: this.synth.get().envelope.sustain,
+      r: this.synth.get().envelope.release,
     };
   }
 }

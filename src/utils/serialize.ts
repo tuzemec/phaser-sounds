@@ -1,3 +1,4 @@
+import type { Time } from "tone/build/esm/core/type/Units";
 import type { OmniOscillatorType } from "tone/build/esm/source/oscillator/OscillatorInterface";
 import type { Platform } from "../game/objects/Platform";
 import type { Source } from "../game/objects/Source";
@@ -9,10 +10,10 @@ export type SourceData = {
   muted: boolean;
   interval: string;
   osc: OmniOscillatorType;
-  a: number;
-  d: number;
+  a: Time;
+  d: Time;
   s: number;
-  r: number;
+  r: Time;
 };
 
 export type PlatformData = {
@@ -36,6 +37,8 @@ export const serialize = (scene: SoundScene) => {
     .getChildren()
     .map((p) => (p as Platform).serialize());
   state.s = scene.sources.getChildren().map((s) => (s as Source).serialize());
+
+  console.log("serializing", state);
 
   const encoded = encodeURIComponent(JSON.stringify(state));
   const urlParams = new URLSearchParams({ state: encoded });

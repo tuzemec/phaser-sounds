@@ -7,10 +7,8 @@ import { Source } from "../objects/Source";
 
 export class SoundScene extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
-  gameText: Phaser.GameObjects.Text;
   sources: Phaser.GameObjects.Group;
   platforms: Phaser.GameObjects.Group;
-  toneInitialized: boolean;
 
   constructor() {
     super("SoundScene");
@@ -34,7 +32,6 @@ export class SoundScene extends Scene {
     this.camera.setBackgroundColor(config.global.background);
     this.sources = this.add.group();
     this.platforms = this.add.group();
-    this.toneInitialized = false;
 
     this.input.on(
       "pointerdown",
@@ -99,7 +96,7 @@ export class SoundScene extends Scene {
         ? width / 2
         : this.sources.getLast(true).x + 50;
 
-    const source = this.add.existing(new Source(this, newX, 0));
+    const source = this.add.existing(new Source(this, newX, 0, {}));
     this.sources.add(source);
   }
 
@@ -112,13 +109,4 @@ export class SoundScene extends Scene {
     EventBus.emit("global.deselect");
     source.destroy();
   }
-
-  // getState() {
-  //   const ret = { s: [], p: [] };
-
-  //   for (const s in this.sources.children) {
-  //     console.log(s);
-  //     ret.s.push(s);
-  //   }
-  // }
 }
