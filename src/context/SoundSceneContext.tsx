@@ -1,8 +1,8 @@
 import { type ParentComponent, createContext, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
 import * as Tone from "tone";
-import type { Platform } from "../game/objects/Platform";
-import type { Source } from "../game/objects/Source";
+import { Platform } from "../game/objects/Platform";
+import { Source } from "../game/objects/Source";
 import type { SoundScene } from "../game/scenes/SoundScene";
 
 type GameState = {
@@ -21,6 +21,7 @@ type GameActions = {
   select: (item: Source | Platform) => void;
   deselect: () => void;
   toggle: () => void;
+  removeSelected: () => void;
   updatePlatform: () => void;
   toggleAbout: () => void;
 };
@@ -43,6 +44,7 @@ const GameContext = createContext<GameStore>([
     select: () => undefined,
     deselect: () => undefined,
     toggle: () => undefined,
+    removeSelected: () => undefined,
     updatePlatform: () => undefined,
     toggleAbout: () => undefined,
   },
@@ -88,6 +90,15 @@ export const GameContextProvider: ParentComponent = (props) => {
 
         Tone.getTransport().toggle();
         setState("playing", Tone.getTransport().state === "started");
+      },
+      removeSelected() {
+        if (!state.selected) return;
+
+        if (state.selected instanceof Platform)
+          state.scene?.removePlatform(state.selected);
+
+        if (state.selected instanceof Source)
+          state.scene?.removeSource(state.selected);
       },
       updatePlatform() {
         console.log("update platform", state);

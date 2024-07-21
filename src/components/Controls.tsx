@@ -1,9 +1,25 @@
+import { onCleanup, onMount } from "solid-js";
 import { useGameContext } from "../context/SoundSceneContext";
 import { serialize } from "../utils/serialize";
 import Editors from "./Editors";
 
 export default function () {
-  const [state, { toggle, toggleAbout }] = useGameContext();
+  const [state, { toggle, toggleAbout, removeSelected }] = useGameContext();
+
+  const keyHandler = (e: KeyboardEvent) => {
+    if (e.key === " ") toggle();
+    if (e.key === "p") state.scene?.addPlatform();
+    if (e.key === "s") state.scene?.addSource();
+    if (e.key === "Backspace") removeSelected();
+  };
+
+  onMount(() => {
+    document.addEventListener("keydown", keyHandler);
+  });
+
+  onCleanup(() => {
+    document.removeEventListener("keydown", keyHandler);
+  });
 
   return (
     <div class="controls">

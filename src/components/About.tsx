@@ -41,6 +41,21 @@ const About = () => {
             <a href="https://www.solidjs.com/">SolidJS</a> and{" "}
             <a href="https://tonejs.github.io/">Tone.js</a>.
           </p>
+          <b>kyboard shortcuts:</b>
+          <ul>
+            <li>
+              <kbd>space</kbd> - start/stop
+            </li>
+            <li>
+              <kbd>s</kbd> - add source
+            </li>
+            <li>
+              <kbd>p</kbd> - add platform
+            </li>
+            <li>
+              <kbd>backspace</kbd> - remove selected
+            </li>
+          </ul>
         </main>
         <footer>
           <button onClick={toggleAbout} type="button">

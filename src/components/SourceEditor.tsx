@@ -22,6 +22,7 @@ export default function PlatformEditor() {
     if (state.selected && state.selected instanceof Source) {
       return state.selected as Source;
     }
+
     return null;
   });
 
@@ -35,54 +36,54 @@ export default function PlatformEditor() {
 
   return (
     <Show when={source()}>
-      <div class="editor">
-        <form>
-          <fieldset>
-            <label>
-              <span>interval:</span>
-              <select
-                value={intervalTime() || ""}
-                onChange={(e) => {
-                  source()!.loop.interval = e.target.value;
+        <div class="editor">
+          <form>
+            <fieldset>
+              <label>
+                <span>interval:</span>
+                <select
+                  value={intervalTime() || ""}
+                  onChange={(e) => {
+                    source()!.loop.interval = e.target.value;
+                  }}
+                >
+                  <For each={INTERVALS}>
+                    {(i) => <option value={i}>{i}</option>}
+                  </For>
+                </select>
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <label>
+                <span>muted</span>
+                <input
+                  type="checkbox"
+                  checked={source()?.loop.mute}
+                  onChange={(e) => {
+                    if (e.currentTarget.checked) {
+                      source()!.loop.mute = true;
+                    } else {
+                      source()!.loop.mute = false;
+                    }
+                  }}
+                />
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <button
+                type="button"
+                onClick={() => {
+                  state.scene?.removeSource(source()!);
                 }}
               >
-                <For each={INTERVALS}>
-                  {(i) => <option value={i}>{i}</option>}
-                </For>
-              </select>
-            </label>
-          </fieldset>
-
-          <fieldset>
-            <label>
-              <span>muted</span>
-              <input
-                type="checkbox"
-                checked={source()?.muted}
-                onChange={(e) => {
-                  if (e.currentTarget.checked) {
-                    source()!.loop.mute = true;
-                  } else {
-                    source()!.loop.mute = false;
-                  }
-                }}
-              />
-            </label>
-          </fieldset>
-
-          <fieldset>
-            <button
-              type="button"
-              onClick={() => {
-                state.scene?.removeSource(source()!);
-              }}
-            >
-              remove
-            </button>
-          </fieldset>
-        </form>
-      </div>
-      <SynthEditor />
+                remove
+              </button>
+            </fieldset>
+          </form>
+        </div>
+        <SynthEditor />
     </Show>
   );
 }

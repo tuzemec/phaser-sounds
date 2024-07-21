@@ -8,8 +8,10 @@ export default function Editors() {
   const [state] = useGameContext();
   return (
     <>
-      <PlatformEditor />
-      <SourceEditor />
+      <div class="editors">
+        <PlatformEditor />
+        <SourceEditor />
+      </div>
       <Show when={state.aboutOpened}>
         <About />
       </Show>

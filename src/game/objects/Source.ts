@@ -54,6 +54,8 @@ export class Source extends Phaser.GameObjects.Container {
       this.spawnBall();
     }, this.interval).start(0);
 
+    this.loop.mute = c.muted;
+
     this.balls.createMultiple({
       key: "balls",
       classType: Ball,
@@ -157,7 +159,7 @@ export class Source extends Phaser.GameObjects.Container {
     return {
       x: this.x,
       y: this.y,
-      muted: this.muted,
+      muted: this.loop.mute,
       interval: this.interval,
       osc: this.synth.get().oscillator.type,
       a: this.synth.get().envelope.attack,
