@@ -5,8 +5,13 @@ import Editors from "./Editors";
 
 export default function () {
   const [state, { toggle, toggleAbout, removeSelected }] = useGameContext();
+  let editorRef!: HTMLDivElement;
 
   const keyHandler = (e: KeyboardEvent) => {
+    const t = e.target as HTMLElement;
+
+    if (editorRef.contains(t)) return;
+
     if (e.key === " ") toggle();
     if (e.key === "p") state.scene?.addPlatform();
     if (e.key === "s") state.scene?.addSource();
@@ -22,9 +27,15 @@ export default function () {
   });
 
   return (
-    <div class="controls">
+    <div ref={editorRef} class="controls">
       <div class="controls-content">
-        <button title="About" type="button" onClick={toggleAbout}>
+        <button
+          title="About"
+          type="button"
+          onClick={() => {
+            toggleAbout();
+          }}
+        >
           <svg
             width={24}
             height={24}
@@ -38,7 +49,13 @@ export default function () {
         </button>
 
         <div>
-          <button type="button" onClick={() => state.scene?.addSource()}>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.currentTarget.blur();
+              state.scene?.addSource();
+            }}
+          >
             + source
           </button>
           <span class="play-button">
@@ -75,7 +92,13 @@ export default function () {
               )}
             </button>
           </span>
-          <button type="button" onClick={() => state.scene?.addPlatform()}>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.currentTarget.blur();
+              state.scene?.addPlatform();
+            }}
+          >
             + platform
           </button>
         </div>

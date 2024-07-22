@@ -1,7 +1,8 @@
 import { For, Show, createMemo } from "solid-js";
-import { Time } from "tone";
+import { type MonoSynth, type PolySynth, Time } from "tone";
 import { useGameContext } from "../context/SoundSceneContext";
 import { Source } from "../game/objects/Source";
+import FilterEditor from "./FilterEditor";
 import SynthEditor from "./SynthEditor";
 
 const INTERVALS = [
@@ -26,6 +27,11 @@ export default function PlatformEditor() {
     return null;
   });
 
+  const synth = createMemo<PolySynth<MonoSynth> | null>(() => {
+    if (source()) return source()!.synth;
+    return null;
+  });
+
   const intervalTime = createMemo<string | null>(() => {
     if (source()?.loop) {
       return Time(source()!.loop.interval).toBarsBeatsSixteenths();
@@ -35,55 +41,75 @@ export default function PlatformEditor() {
   });
 
   return (
-    <Show when={source()}>
-        <div class="editor">
-          <form>
-            <fieldset>
-              <label>
-                <span>interval:</span>
-                <select
-                  value={intervalTime() || ""}
-                  onChange={(e) => {
-                    source()!.loop.interval = e.target.value;
-                  }}
-                >
-                  <For each={INTERVALS}>
-                    {(i) => <option value={i}>{i}</option>}
-                  </For>
-                </select>
-              </label>
-            </fieldset>
+    <Show when={source() && synth()}>
+      <div class="editor">
+        <form onSubmit={(e) => e.preventDefault()}>
+          <fieldset>
+            <label>
+              <span>Vol:</span>
+              <input
+                title={synth()!.get().volume.toString()}
+                type="range"
+                value={synth()!.get().volume}
+                min={-24}
+                max={0}
+                step={0.5}
+                onInput={(e) => {
+                  synth()!.set({
+                    volume: Number(e.target.value),
+                  });
+                }}
+              />
+            </label>
+          </fieldset>
 
-            <fieldset>
-              <label>
-                <span>muted</span>
-                <input
-                  type="checkbox"
-                  checked={source()?.loop.mute}
-                  onChange={(e) => {
-                    if (e.currentTarget.checked) {
-                      source()!.loop.mute = true;
-                    } else {
-                      source()!.loop.mute = false;
-                    }
-                  }}
-                />
-              </label>
-            </fieldset>
-
-            <fieldset>
-              <button
-                type="button"
-                onClick={() => {
-                  state.scene?.removeSource(source()!);
+          <fieldset>
+            <label>
+              <span>interval:</span>
+              <select
+                value={intervalTime() || ""}
+                onChange={(e) => {
+                  source()!.loop.interval = e.target.value;
                 }}
               >
-                remove
-              </button>
-            </fieldset>
-          </form>
-        </div>
-        <SynthEditor />
+                <For each={INTERVALS}>
+                  {(i) => <option value={i}>{i}</option>}
+                </For>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <label>
+              <span>muted</span>
+              <input
+                type="checkbox"
+                checked={source()?.loop.mute}
+                onChange={(e) => {
+                  if (e.currentTarget.checked) {
+                    source()!.loop.mute = true;
+                  } else {
+                    source()!.loop.mute = false;
+                  }
+                }}
+              />
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <button
+              type="button"
+              onClick={() => {
+                state.scene?.removeSource(source()!);
+              }}
+            >
+              remove
+            </button>
+          </fieldset>
+        </form>
+      </div>
+      <SynthEditor />
+      <FilterEditor />
     </Show>
   );
 }

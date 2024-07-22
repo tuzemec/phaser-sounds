@@ -1,11 +1,11 @@
 import { For } from "solid-js";
-import type { EnvelopeOptions } from "tone";
 import type {
   OmniOscillatorOptions,
   OmniOscillatorType,
 } from "tone/build/esm/source/oscillator/OscillatorInterface";
 import { useGameContext } from "../context/SoundSceneContext";
 import type { Source } from "../game/objects/Source";
+import EnvelopeEditor from "./EnvelopeEditor";
 
 const OSC: OmniOscillatorType[] = [
   "sine",
@@ -19,21 +19,17 @@ const OSC: OmniOscillatorType[] = [
   "fattriangle",
 ];
 
-const FLT_OPT: Array<Partial<keyof Omit<EnvelopeOptions, "context">>> = [
-  "attack",
-  "decay",
-  "sustain",
-  "release",
-];
-
 const SynthEditor = () => {
   const [state] = useGameContext();
   const source = state.selected as Source;
   const synth = source.synth;
 
+  synth.get().envelope;
+  synth.get().filterEnvelope;
+
   return (
     <div class="editor">
-      <form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <fieldset>
           <label>
             <span>OSC:</span>
@@ -52,25 +48,14 @@ const SynthEditor = () => {
           </label>
         </fieldset>
 
-        <For each={FLT_OPT}>
-          {(f) => (
-            <fieldset>
-              <label>
-                <span>{f[0]}</span>
-                <input
-                  onChange={(e) =>
-                    synth.set({
-                      envelope: { [f]: e.target.value },
-                    })
-                  }
-                  size={6}
-                  type="text"
-                  value={synth.get().envelope[f].toString()}
-                />
-              </label>
-            </fieldset>
-          )}
-        </For>
+        <EnvelopeEditor
+          envelope={synth.get().envelope}
+          onChange={(prop, value) => {
+            synth.set({
+              envelope: { [prop]: value },
+            });
+          }}
+        />
       </form>
     </div>
   );

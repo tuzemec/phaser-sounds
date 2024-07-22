@@ -40,7 +40,7 @@ export default function PlatformEditor() {
           selectedNotes={selectedNotes}
           setSelectedNotes={setSelectedNotes}
         />
-        <form>
+        <form onSubmit={(e) => e.preventDefault()}>
           <fieldset>
             <label>
               <span>angle:</span>

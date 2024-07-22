@@ -1,4 +1,4 @@
-import { Loop, type OmniOscillatorOptions, PolySynth, Synth } from "tone";
+import { Loop, MonoSynth, type OmniOscillatorOptions, PolySynth } from "tone";
 import config from "../../config.json";
 import type { SourceData } from "../../utils/serialize";
 import { EventBus } from "../EventBus";
@@ -15,6 +15,19 @@ const defaultData: Omit<SourceData, "x" | "y"> = {
   d: 0.1,
   s: 0.3,
   r: 1,
+
+  vol: -3,
+
+  ft: "lowpass",
+  ff: 2500,
+  fq: 0,
+  fo: -12,
+  fc: 0,
+
+  fa: 0.6,
+  fd: 0.2,
+  fs: 0.5,
+  fr: 2,
 };
 
 export class Source extends Phaser.GameObjects.Container {
@@ -26,7 +39,7 @@ export class Source extends Phaser.GameObjects.Container {
   loop: Loop;
   progress: Phaser.GameObjects.Graphics;
   interval: string;
-  synth: PolySynth<Synth>;
+  synth: PolySynth<MonoSynth>;
 
   constructor(
     scene: SoundScene,
@@ -43,11 +56,26 @@ export class Source extends Phaser.GameObjects.Container {
     this.setSize(cfg.width, cfg.height);
     this.muted = c.muted;
     this.interval = c.interval;
-    this.synth = new PolySynth(Synth).toDestination();
+    this.synth = new PolySynth(MonoSynth).toDestination();
 
     this.synth.set({
+      volume: c.vol,
       oscillator: { type: c.osc } as OmniOscillatorOptions,
       envelope: { attack: c.a, decay: c.d, sustain: c.s, release: c.r },
+      filter: {
+        type: c.ft,
+        Q: c.fq,
+        rolloff: c.fo,
+      },
+
+      filterEnvelope: {
+        baseFrequency: c.ff,
+        attack: c.fa,
+        decay: c.fd,
+        sustain: c.fs,
+        release: c.fr,
+        octaves: 0.1,
+      },
     });
 
     this.loop = new Loop(() => {
@@ -87,6 +115,7 @@ export class Source extends Phaser.GameObjects.Container {
       "destroy",
       () => {
         this.loop.dispose();
+        this.synth.dispose();
       },
       this,
     );
@@ -156,16 +185,33 @@ export class Source extends Phaser.GameObjects.Container {
   }
 
   serialize(): SourceData {
+    const s = this.synth.get();
+
     return {
       x: this.x,
       y: this.y,
       muted: this.loop.mute,
       interval: this.interval,
-      osc: this.synth.get().oscillator.type,
-      a: this.synth.get().envelope.attack,
-      d: this.synth.get().envelope.decay,
-      s: this.synth.get().envelope.sustain,
-      r: this.synth.get().envelope.release,
+
+      osc: s.oscillator.type,
+      a: s.envelope.attack,
+      d: s.envelope.decay,
+      s: s.envelope.sustain,
+      r: s.envelope.release,
+
+      vol: s.volume,
+
+      ft: s.filter.type,
+      fq: s.filter.Q,
+      fo: s.filter.rolloff,
+
+      ff: s.filterEnvelope.baseFrequency,
+      fc: s.filterEnvelope.octaves,
+
+      fa: s.filterEnvelope.attack,
+      fd: s.filterEnvelope.decay,
+      fs: s.filterEnvelope.sustain,
+      fr: s.filterEnvelope.release,
     };
   }
 }

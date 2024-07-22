@@ -1,4 +1,5 @@
-import type { Time } from "tone/build/esm/core/type/Units";
+import type { FilterRollOff } from "tone";
+import type { Frequency, Time } from "tone/build/esm/core/type/Units";
 import type { OmniOscillatorType } from "tone/build/esm/source/oscillator/OscillatorInterface";
 import type { Platform } from "../game/objects/Platform";
 import type { Source } from "../game/objects/Source";
@@ -14,6 +15,21 @@ export type SourceData = {
   d: Time;
   s: number;
   r: Time;
+
+  vol: number;
+
+  // filter type, freq, q, rollof, octaves
+  ft: BiquadFilterType;
+  ff: Frequency;
+  fq: number;
+  fo: FilterRollOff;
+  fc: number;
+
+  // filter adsr
+  fa: Time;
+  fd: Time;
+  fs: number;
+  fr: Time;
 };
 
 export type PlatformData = {
