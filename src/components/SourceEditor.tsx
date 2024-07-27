@@ -1,9 +1,19 @@
-import { For, Show, createMemo } from "solid-js";
+import { Show, createMemo } from "solid-js";
+import { type ContinuousRange, RangeType } from "solid-knobs";
 import { type MonoSynth, type PolySynth, Time } from "tone";
 import { useGameContext } from "../context/SoundSceneContext";
 import { Source } from "../game/objects/Source";
 import FilterEditor from "./FilterEditor";
+import Knob from "./Knob";
 import SynthEditor from "./SynthEditor";
+
+const volumeRange: ContinuousRange = {
+  type: RangeType.Continuous,
+  start: -50,
+  end: 1,
+  step: 1,
+  valueToString: (v) => String(Math.round(v)),
+};
 
 const INTERVALS = [
   "0:1:0",
@@ -32,12 +42,12 @@ export default function PlatformEditor() {
     return null;
   });
 
-  const intervalTime = createMemo<string | null>(() => {
+  const intervalTime = createMemo<string>(() => {
     if (source()?.loop) {
       return Time(source()!.loop.interval).toBarsBeatsSixteenths();
     }
 
-    return null;
+    return "1:0:0";
   });
 
   return (
@@ -45,38 +55,28 @@ export default function PlatformEditor() {
       <div class="editor">
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset>
-            <label>
-              <span>Vol:</span>
-              <input
-                title={synth()!.get().volume.toString()}
-                type="range"
-                value={synth()!.get().volume}
-                min={-24}
-                max={0}
-                step={0.5}
-                onInput={(e) => {
-                  synth()!.set({
-                    volume: Number(e.target.value),
-                  });
-                }}
-              />
-            </label>
+            {/* <Knob range={volumeRange} defaultValue={synth()!.get().volume} /> */}
+            <Knob
+              label="Vol"
+              onChange={(v) => synth()!.set({ volume: v })}
+              range={volumeRange}
+              defaultValue={synth()!.get().volume}
+            />
           </fieldset>
 
           <fieldset>
-            <label>
-              <span>interval:</span>
-              <select
-                value={intervalTime() || ""}
-                onChange={(e) => {
-                  source()!.loop.interval = e.target.value;
-                }}
-              >
-                <For each={INTERVALS}>
-                  {(i) => <option value={i}>{i}</option>}
-                </For>
-              </select>
-            </label>
+            <Knob
+              label="Interval"
+              readOnlyInput
+              onChange={(v) => {
+                source()!.loop.interval = INTERVALS[v];
+              }}
+              defaultValue={INTERVALS.indexOf(intervalTime())}
+              range={{
+                type: RangeType.Choice,
+                choices: INTERVALS.map((i, idx) => ({ value: idx, label: i })),
+              }}
+            />
           </fieldset>
 
           <fieldset>
@@ -97,14 +97,16 @@ export default function PlatformEditor() {
           </fieldset>
 
           <fieldset>
-            <button
-              type="button"
-              onClick={() => {
-                state.scene?.removeSource(source()!);
-              }}
-            >
-              remove
-            </button>
+            <span>
+              <button
+                type="button"
+                onClick={() => {
+                  state.scene?.removeSource(source()!);
+                }}
+              >
+                remove
+              </button>
+            </span>
           </fieldset>
         </form>
       </div>

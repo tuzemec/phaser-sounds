@@ -23,7 +23,8 @@ export type SourceData = {
   ff: Frequency;
   fq: number;
   fo: FilterRollOff;
-  fc: number;
+  /** octaves or envelope depth? */
+  fe: number;
 
   // filter adsr
   fa: Time;

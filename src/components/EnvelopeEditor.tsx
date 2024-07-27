@@ -1,5 +1,7 @@
 import { type Component, For } from "solid-js";
+import { RangeType } from "solid-knobs";
 import type { MonoSynthOptions } from "tone";
+import Knob from "./Knob";
 
 type ENV_PROPS = "attack" | "decay" | "sustain" | "release";
 
@@ -35,7 +37,7 @@ const MIN_MAX_STEP: Record<ENV_PROPS, MMT> = {
 };
 
 type Props = {
-  onChange: (prop: ENV_PROPS, value: string) => void;
+  onChange: (prop: ENV_PROPS, value: number) => void;
   envelope: MonoSynthOptions["envelope"];
 };
 
@@ -44,17 +46,17 @@ const EnvelopeEditor: Component<Props> = (props) => {
     <For each={ENV_OPT}>
       {(f) => (
         <fieldset>
-          <label>
-            <span>{f[0]}</span>
-            <input
-              onInput={(e) => props.onChange(f, e.target.value)}
-              type="range"
-              value={props.envelope[f].toString()}
-              min={MIN_MAX_STEP[f].min}
-              max={MIN_MAX_STEP[f].max}
-              step={MIN_MAX_STEP[f].step}
-            />
-          </label>
+          <Knob
+            label={f}
+            defaultValue={Number(props.envelope[f])}
+            range={{
+              type: RangeType.Continuous,
+              start: MIN_MAX_STEP[f].min,
+              end: MIN_MAX_STEP[f].max,
+              step: MIN_MAX_STEP[f].step,
+            }}
+            onChange={(v) => props.onChange(f, v)}
+          />
         </fieldset>
       )}
     </For>

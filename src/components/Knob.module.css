@@ -1,0 +1,36 @@
+.knob {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 64px;
+  margin-top: 0.25rem;
+
+  & svg {
+    display: block;
+  }
+
+  & input {
+    /* display: none; */
+    text-align: center;
+    background: #003049;
+    border: 0;
+    color: #fff;
+    padding: .25rem;
+    border-radius: .25rem;
+  }
+}
+
+.tooltip {
+  position: absolute;
+}
+
+.label {
+  font-size: 14px;
+  position: absolute;
+  text-align: center;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -110%);
+  pointer-events: none;
+}

@@ -1,4 +1,4 @@
-import { For } from "solid-js";
+import { RangeType } from "solid-knobs";
 import type {
   OmniOscillatorOptions,
   OmniOscillatorType,
@@ -6,6 +6,7 @@ import type {
 import { useGameContext } from "../context/SoundSceneContext";
 import type { Source } from "../game/objects/Source";
 import EnvelopeEditor from "./EnvelopeEditor";
+import Knob from "./Knob";
 
 const OSC: OmniOscillatorType[] = [
   "sine",
@@ -31,21 +32,20 @@ const SynthEditor = () => {
     <div class="editor">
       <form onSubmit={(e) => e.preventDefault()}>
         <fieldset>
-          <label>
-            <span>OSC:</span>
-            <select
-              value={synth.get().oscillator.type}
-              onChange={(e) =>
-                synth.set({
-                  oscillator: { type: e.target.value } as OmniOscillatorOptions,
-                })
-              }
-            >
-              <For each={OSC}>
-                {(osc) => <option value={osc}>{osc}</option>}
-              </For>
-            </select>
-          </label>
+          <Knob
+            label="OSC"
+            readOnlyInput
+            defaultValue={OSC.indexOf(synth.get().oscillator.type)}
+            range={{
+              type: RangeType.Choice,
+              choices: OSC.map((i, idx) => ({ value: idx, label: i })),
+            }}
+            onChange={(v) => {
+              synth.set({
+                oscillator: { type: OSC[v] } as OmniOscillatorOptions,
+              });
+            }}
+          />
         </fieldset>
 
         <EnvelopeEditor

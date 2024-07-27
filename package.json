@@ -26,6 +26,7 @@
   "dependencies": {
     "phaser": "^3.80.1",
     "solid-js": "^1.8.17",
+    "solid-knobs": "^0.5.2",
     "tone": "^15.0.4"
   },
   "devDependencies": {
