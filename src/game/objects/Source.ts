@@ -1,4 +1,10 @@
-import { Loop, MonoSynth, type OmniOscillatorOptions, PolySynth } from "tone";
+import {
+  Frequency,
+  Loop,
+  MonoSynth,
+  type OmniOscillatorOptions,
+  PolySynth,
+} from "tone";
 import config from "../../config.json";
 import type { SourceData } from "../../utils/serialize";
 import { EventBus } from "../EventBus";
@@ -16,18 +22,18 @@ const defaultData: Omit<SourceData, "x" | "y"> = {
   s: 0.3,
   r: 1,
 
-  vol: -3,
+  vol: -6,
 
   ft: "lowpass",
-  ff: 2500,
-  fq: 0,
+  ff: 500,
+  fq: 1,
   fo: -12,
-  fc: 0,
+  fe: 0,
 
-  fa: 0.6,
-  fd: 0.2,
-  fs: 0.5,
-  fr: 2,
+  fa: 0.005,
+  fd: 0.1,
+  fs: 1,
+  fr: 1,
 };
 
 export class Source extends Phaser.GameObjects.Container {
@@ -69,12 +75,12 @@ export class Source extends Phaser.GameObjects.Container {
       },
 
       filterEnvelope: {
-        baseFrequency: c.ff,
+        baseFrequency: Frequency(c.ff).toFrequency(),
         attack: c.fa,
         decay: c.fd,
         sustain: c.fs,
         release: c.fr,
-        octaves: 0.1,
+        octaves: c.fe,
       },
     });
 
@@ -205,8 +211,8 @@ export class Source extends Phaser.GameObjects.Container {
       fq: s.filter.Q,
       fo: s.filter.rolloff,
 
-      ff: s.filterEnvelope.baseFrequency,
-      fc: s.filterEnvelope.octaves,
+      ff: Frequency(s.filterEnvelope.baseFrequency).toFrequency(),
+      fe: s.filterEnvelope.octaves,
 
       fa: s.filterEnvelope.attack,
       fd: s.filterEnvelope.decay,
